@@ -1,1 +1,512 @@
+ch7-1
+#include "pch.h"
+#include <iostream>
+using namespace std;
 
+void sort(int a[], int b[], int num_a, int num_b)
+{
+	for (int i = 0; i < num_b; i++)
+	{
+		int j;
+		for (j = num_a + i - 1; j >= 0 && b[i] < a[j]; j--) //j--
+			//不是交换 否则b[i]的值会改变
+			a[j + 1] = a[j]; //大的往后移 //在这里j+1 而不是for的j=3+i-1改成3+i 因为最开始a[3]不存在 无法和b[i]比较
+		a[j + 1] = b[i]; //小的往前移 //放在for外 因为若不符合也要将b[i]放在a[j]处 否则不符合条件的无法添加到a数组 //j+1 注意j--后j改变
+	}
+}
+
+int main(void)
+{
+	cout << "输入数组a元素个数:\n";
+	int num_a;
+	cin >> num_a;
+
+	cout << "输入数组b元素个数：\n";
+	int num_b;
+	cin >> num_b;
+
+	cout << "输入数组a，数值为升序:\n";
+	int a[100];
+	for (int i = 0; i < num_a; i++)
+		cin >> a[i];
+
+	cout << "输入数组b，数值为升序:\n";
+	int b[100];
+	for (int i = 0; i < num_b; i++)
+		cin >> b[i];
+	//int a[100] = { 1, 4, 9 }; //若a[] = {1, 4, 9} 默认数组长度为3，无法再向里面添加元素
+	//int b[100] = { 0, 2, 11 };
+
+	sort(a, b, num_a, num_b);
+
+	cout << "数组为：\n";
+	for (int i = 0; i < num_a + num_b; i++)
+		cout << a[i] << '\t';
+
+	return 0;
+}
+
+ch7-2
+#include "pch.h"
+#include <iostream>
+using namespace std;
+int main(void)
+{
+	int sum(int[100][100], int, int); //int[100][100] 否则提示"int (*)[100]" 类型的实参与 "int" 类型的形参不兼容，“int sum(int, int, int)”: 无法将参数 1 从“int[100][100]”转换为“int”
+
+	cout << "输入数组行数:\n";
+	int row;
+	cin >> row;
+	cout << "输入数组列数:\n";
+	int col;
+	cin >> col;
+	cout << "输入数组:\n";
+	int a[100][100]; //?
+	for (int i = 0; i < row; i++) //这里row、col可以控制输入的行数 列数
+		for (int j = 0; j < col; j++)
+			cin >> a[i][j];
+
+	cout << "二维数组周边元素的和为" << sum(a, row, col) << endl;
+
+	return 0;
+}
+
+int sum(int a[100][100], int row, int col)
+{
+	int sum_r = 0;
+		for (int j = 0; j < col; j++)
+			sum_r += a[0][j];
+
+		for (int j = 0; j < col; j++)
+			sum_r += a[row - 1][j];
+
+	int sum_c = 0;
+		for (int j = 1; j < row - 1; j++) //row-1否则无法计算倒数第二行 下同
+			sum_c += a[j][0];
+
+		for (int j = 1; j < row - 1; j++)
+			sum_c += a[j][col - 1];
+
+	int sum = sum_r + sum_c;
+	return sum;
+}
+
+ch7-3
+#include "pch.h"
+#include <iostream>
+using namespace std;
+
+int main(void)
+{
+	char art[10000]; //?
+	cout << "请输入一篇文章:\n";
+
+	int the = 0;
+	/*for (int i = 0; i < 10000; i++)
+	{
+		cin.get(art[i]);
+		if (art[i] == '\n')
+			if (art[i + 1] == '\n')
+				break;
+			if (art[i] == 'T' || art[i] == 't')
+				if (art[i + 1] == 'H' || art[i + 1] == 'h')
+					if (art[i + 2] == 'E' || art[i + 2] == 'e')
+						if (i >= 1 && (!((art[i - 1] >= 65 && art[i - 1] <= 90) || (art[i - 1] >= 97 && art[i - 1] <= 122))) || i == 0) //前无字母， 注意或条件 接收第一个字符
+						if (!((art[i + 3] >= 65 && art[i + 3] <= 90) || (art[i + 3] >= 97 && art[i + 3] <= 122))) // 注意逻辑语句怎么写 //这个语句目的是防止thesis the.计算成2个的情况。the后面允许其他符号，除了字母。
+							the++;
+	}
+	要是写成这样，cin.get(art[i])后数组之后i+1个字符， art[i+1]=随机值
+	*/
+
+	for (int i = 0; i < 10000; i += 2) // i += 2 
+	{
+		cin.get(art[i]);
+		if (i >= 1 && ((art[i - 1] == '\n') && (art[i] == '\n'))) //第二个输入和下一次的第一个输入是回车
+			break;
+		cin.get(art[i + 1]); //否则循环不会结束 因为cin.get(art[i])之后如果没这个语句，art[i+1]是随机值
+		if ((art[i] == '\n') && (art[i + 1] == '\n'))
+				break;
+	}
+
+	for (int i = 0; i < 10000; i++)
+		if (art[i] == 'T' || art[i] == 't')
+			if (art[i + 1] == 'H' || art[i + 1] == 'h')
+				if (art[i + 2] == 'E' || art[i + 2] == 'e')
+					if (i >= 1 && (!((art[i - 1] >= 65 && art[i - 1] <= 90) || (art[i - 1] >= 97 && art[i - 1] <= 122))) || i == 0) //前无字母， 注意或条件 接收第一个字符
+						if (!((art[i + 3] >= 65 && art[i + 3] <= 90) || (art[i + 3] >= 97 && art[i + 3] <= 122))) // 注意逻辑语句怎么写 //这个语句目的是防止thesis the.计算成2个的情况。the后面允许其他符号，除了字母。
+							the++;
+
+	cout << "这篇文章the（忽略大小写）的个数为" << the << endl;
+
+}
+
+ch7-3-1
+#include "pch.h"
+#include <iostream>
+#include <string.h>
+using namespace std;
+
+int main(void)
+{
+	char art[10000] = { '\0' }; //
+	cout << "请输入一篇文章:\n";
+	for (int i = 0; i < 10000; i += 2) //
+	{
+		cin.get(art[i]);
+		if (i >= 1 && ((art[i - 1] == '\n') && (art[i] == '\n'))) 
+			break;
+		cin.get(art[i + 1]); 
+		if ((art[i] == '\n') && (art[i + 1] == '\n'))
+			break;
+	}
+
+	int word = 0;
+
+	char str1[100] = { '\0' };
+	cout << "输入要找的单词:\n";
+	cin.getline(str1, 100);
+
+	int len_art = strlen(art);
+	int len_str1 = strlen(str1);
+	
+	for (int i = 0; i < len_art; i++)
+	{
+		int flag = 1, j;
+		for (j = 0; j < len_str1; j++)
+		{
+			if (art[i + j] == str1[j])
+				;
+			else
+			{
+				flag = 0;
+				break;
+			}
+		}
+		if (flag == 1)
+			if (i >= 1 && (!((art[i - 1] >= 65 && art[i - 1] <= 90) || (art[i - 1] >= 97 && art[i - 1] <= 122))) || i == 0) 
+				if (!((art[i + j] >= 65 && art[i + j] <= 90) || (art[i + j] >= 97 && art[i + j] <= 122))) //
+					word++;
+	}
+
+	cout << "这篇文章the（忽略大小写）的个数为" << word << endl;
+
+}
+
+ch7-课外练习3
+#include"pch.h"
+#include<iostream>
+#include<string.h>
+using namespace std;
+int main(void)
+{
+	bool judge(char[100], int, char, int);//char[100]
+
+	cout << "请输入表达式:\n";
+	char string[100]; //int char[100] invalid //char type
+	cin.getline(string, 100); //获得定义长度内任意长度字符串
+	int len = strlen(string);
+
+	if (judge(string, len, '(', 0) == true && judge(string, len, '[', 0) == true && judge(string, len, '{', 0) == true) 
+	{
+		for (int i = 0; i < len; i++)// 放到if里面 否则((a+b)变成(0a+b0会输出正确
+		{
+			if (string[i] == ')' || string[i] == ']' || string[i] == '}')
+			{
+				cout << "括号不匹配!\n";
+				return 0; // 若不匹配 直接这里return 0，否则会输出下面的无误
+			}
+		}
+		cout << "表达式括号正确！\n";//在for外面, 否则输出多次
+	}
+	else
+		cout << "括号不匹配！\n";
+
+	return 0;
+}
+
+bool judge(char string[100], int len, char char1, int i)
+{
+	char char2, char3, char4; //外面定义， 否则无法引用
+	switch (char1)// () no':'
+	{
+	case '(':
+		char2 = ')', char3 = ']', char4 = '}';
+		break;
+	case '[':
+		char2 = ']', char3 = ')', char4 = '}';
+		break;
+	case '{':
+		char2 = '}', char3 = ')', char4 = ']';
+		break;
+	}
+
+	for ( ; i < len; i++)
+	{
+		if (string[i] == char1)
+		{
+			int j = i; //initialize j here otherwise i changes and thus j changes
+			int k = i + 1; //here othwise i changes and thus k changes
+			int m = i + 1; //
+
+			for (; i + 1 < len; i++) //i++  after this loop i will change to len - 2
+				if (string[i + 1] == char1) //i+1
+				{
+					bool Bool = judge(string, len, char1, i + 1); // string[] wrong //i+1 but not i otherwise the loop will not end
+					if (Bool == false)
+						return false;
+				}
+		//不用else 否则若执行if不执行以下的代码
+
+			//下面括进if
+			// int k = i + 1; //here but not i+1<len below no i++ otherwise i will be changed
+			for (; k < len; k++)
+			{
+				if (string[k] == char2)
+				{
+					for (; m < k; m++)
+					{
+						if (string[m] == char3 || string[m] == char4)
+							return false;
+					}
+					string[j] = '0', string[k] = '0'; //j, k but not i, j. i, j has changed here
+					return true;
+				}
+			}
+			return false;//for之外
+		} // 			
+	}
+	return true; // if no [ or {, return true
+}
+
+ch7-选做1
+#include "pch.h"
+#include <iostream>
+using namespace std;
+int main(void)
+{
+	void d2h(char[100], int, int);//[100]
+
+	cout << "please input an integer represented in decimal notation:\n";
+	int dec1;
+	cin >> dec1;
+
+	int count;
+	int dec2 = dec1; //若下面for直接用dec1， dec1的值会改变，使调用函数的实参不准确
+	for (count = 1; dec2 / 16 != 0; count++)
+		dec2 /= 16;
+
+	char hex1[100]; //char才可以放字母
+	d2h(hex1, dec1, count);
+	for (int i = 0; i < count; i++)
+		cout << hex1[i];
+	return 0;
+}
+
+void d2h(char hex1[100], int dec1, int count)
+{
+	count--;
+	if (dec1 == 0)
+		return ;
+	d2h(hex1, dec1 / 16, count); //这里不用hex1[100]
+	int hex_ = dec1 % 16;
+	if (hex_ >= 0 && hex_ <= 9)// 用if控制 分别输出数字和字母
+		hex1[count] = char(dec1 % 16 + 48);
+	else
+		hex1[count] = char(dec1 % 16 + 55);
+}
+
+ch7-选做2
+#include "pch.h"
+#include <iostream>
+#include <string.h>
+using namespace std;
+int main(void)
+{
+	bool judge(char[], int); //[]
+
+	cout << "请输入一个数:\n";
+	char a[100];
+	cin.getline(a, 100); //可输入未知长度字符串，防止回车继续输入
+	int len = strlen(a); //这样计算就可
+
+	cout << "这个数";
+	if (judge(a, len) == true)
+		cout << "是";
+	else
+		cout << "不是";
+	cout << "回文数";
+}
+
+bool judge(char a[100], int len)
+{
+	char b[100];
+	for (int j = len - 1; j >= 0; j--) //len-1
+		b[j] = a[len - j - 1];
+	
+	int flag = 0;
+	for (int i = 0; i < len; len++)
+	{
+		if (a[i] == b[i]) //==
+			;
+		else
+		{
+			flag = 1;
+			break;
+		}
+	}
+
+	if (flag == 0)
+		return true;
+	else
+		return false;
+}
+
+实验六-1
+#include "pch.h"
+#include <iostream>
+using namespace std;
+int main(void)
+{
+	cout << "请输入成绩:\n";
+	int grade[10];
+	for (int i = 0; i < 10; i++)
+		cin >> grade[i];
+
+	for (int i = 0; i < 10; i++)
+	{
+		int index = i;
+		for (int j = i + 1; j < 10; j++)
+		{
+			if (grade[index] < grade[j])
+				index = j; //不用用中间量
+		}
+
+		if (index != i)
+		{
+			int intermediary = grade[i];
+			grade[i] = grade[index];
+			grade[index] = intermediary;
+		}
+	}
+
+	for (int i = 0; i < 10; i++)
+		cout << grade[i] << '\t';
+
+	return 0;
+}
+
+实验六-2
+#include "pch.h"
+#include <iostream>
+#include <iomanip>
+using namespace std;
+int main(void)
+{
+	cout << setiosflags(ios::fixed); //ios::fixed
+	cout.precision(1); 
+
+	float grade[4][4] = { { 89, 78, 56 }, { 88, 99, 100 },{ 72, 80, 61 }, { 60, 70, 75 } }; //有四列 //float
+	float course_average[3]; //float
+
+	for (int i = 0; i < 3; i++)
+	{
+		float sum = 0; //sum要初始化为0 //float
+		for (int j = 0; j < 4; j++)
+			sum += grade[j][i];
+		course_average[i] = sum / 4;
+	}
+
+	for (int i = 0; i < 3; i++)
+		cout << "课程" << i + 1 << "的平均成绩是" << course_average[i] << endl;
+
+	for (int i = 0; i < 4; i++)
+	{
+		float sum = 0;
+		for (int j = 0; j < 3; j++)
+		{
+			sum += grade[i][j];
+		}
+		grade[i][3] = sum / 3; //float //三门课 /3
+	}
+
+	for (int i = 0; i < 4; i++)
+		cout << "学生" << i + 1 << "的平均成绩是" << grade[i][3] << endl;
+
+	cout << setw(6) << ' ';
+	for (int i = 1; i <= 3; i++)
+		cout << setw(7) << "课程" << i;
+	cout << setw(12) << "个人平均分" << endl;
+
+	for (int i = 0; i < 4; i++)
+	{
+		cout << "学生" << i + 1 << '\t' << "  "; //A 注意对齐
+		for (int j = 0; j < 4; j++) //j<4 否则无法输出学生平均成绩
+			cout << grade[i][j] << '\t' << "  "; //A
+		cout << endl;
+	}
+
+	cout << "课程平均分";
+	for (int i = 0; i < 3; i++)
+		cout << course_average[i] << '\t' << "  "; //A
+
+	return 0;
+}
+
+实验六-3
+#include "pch.h"
+#include <iostream>
+#include <string.h>
+using namespace std;
+int main(void)
+{
+	cout << "输入一行字符:\n";
+
+	char str[100];
+	int count = 0;
+	cin.getline(str, 100); //两参数
+	for (int i = 0; i < 100; i++)
+	{
+		if (str[i] == ' ')
+			if (str[i + 1] != ' ')
+				count++;
+	}
+
+	cout << "单词数为:" << count + 1 << endl;
+}
+
+实验六-3-1
+#include"pch.h"
+#include<iostream>
+#include<string.h>
+using namespace std;
+int main(void)
+{
+	cout << "input something:\n";
+
+	char art[10000];
+	cin.getline(art, 10000);
+
+	int len = strlen(art);
+	int word = 0;
+	for (int i = 0; i < len; )
+	{
+		if (art[i] != ' ')
+		{
+			word++;
+			for (int j = i + 1; j < len; j++) //len + 1
+			{
+				if (art[j] == ' ' ) // '\0'
+				{
+					i = j;
+					break;
+				}
+			}
+		}
+		else
+			i++;
+	}
+
+	cout << "the number of words is " << word << endl;
+
+	return 0;  
+}
